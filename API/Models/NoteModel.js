@@ -31,11 +31,7 @@ const NoteSchema = new Schema({
         required: true,
         default: 0,
     },
-    notes: {
-        type: Array,
-        required: false,
-        default: [],
-    },
+    notes: [String],
     price: {
         type: Number,
         required: true,

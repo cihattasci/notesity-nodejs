@@ -28,15 +28,20 @@ module.exports.register = async (req,res) => {
         userName: first_user.userName,
         token: token,
     });
-
-    user.save().then(u => res.send(u)).catch(e => res.send(e));
+    
+    user.save()
+        .then(user => {
+            await User.updateOne({email: user.email}, {isLoggedIn: true}).then(() => null).catch(e => res.json(e));
+            res.send(user);
+        })
+        .catch(e => res.send(e));
 };
 
 module.exports.login = async (req, res) => {
     await User.findOne({email: req.body.email}).then(async user => {
         if (!user.token) {
             var token = jwt.sign({ user }, process.env.jwtKey);
-            await User.updateOne({email: user.email}, {token}).then(() => null).catch(e => res.json(e));
+            await User.updateOne({email: user.email}, {token, isLoggedIn: true}).then(() => null).catch(e => res.json(e));
         } else {
             null;
         };
@@ -71,7 +76,7 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.logout = async (req, res) => {
-    await User.updateOne({_id: req.params.id}, {token: null})
+    await User.updateOne({_id: req.params.id}, {token: null, isLoggedIn: false})
         .then(() => res.json({success: true, message: 'Successful logout'}))
         .catch(e => res.json({success: false, message:'Failed logout', response: e}));
 };
