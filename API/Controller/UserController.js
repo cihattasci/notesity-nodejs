@@ -30,7 +30,7 @@ module.exports.register = async (req,res) => {
     });
     
     user.save()
-        .then(user => {
+        .then(async user => {
             await User.updateOne({email: user.email}, {isLoggedIn: true}).then(() => null).catch(e => res.json(e));
             res.send(user);
         })
@@ -41,7 +41,7 @@ module.exports.login = async (req, res) => {
     await User.findOne({email: req.body.email}).then(async user => {
         if (!user.token) {
             var token = jwt.sign({ user }, process.env.jwtKey);
-            await User.updateOne({email: user.email}, {token, isLoggedIn: true}).then(() => null).catch(e => res.json(e));
+            await User.updateOne({email: user.email}, {token}).then(() => null).catch(e => res.json(e));
         } else {
             null;
         };
@@ -60,7 +60,7 @@ module.exports.login = async (req, res) => {
                 isResetToken = false;
             }
             if (isPasswordMatch || isResetToken) {
-                await User.updateOne({email: req.body.email}, {resetToken: undefined, resetTokenExpirations: undefined});
+                await User.updateOne({email: req.body.email}, {resetToken: undefined, resetTokenExpirations: undefined, isLoggedIn: true});
                 return res.status(200).json({user: user, success:true});
             } else {
                 return res.status(401).json({
