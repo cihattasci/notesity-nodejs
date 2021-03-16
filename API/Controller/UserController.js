@@ -1,6 +1,5 @@
 var User = require('../Models/UserModel');
 var bcrypt = require('bcrypt');
-var path = require('path');
 var nodemailer = require("nodemailer");
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
@@ -43,7 +42,7 @@ module.exports.login = async (req, res) => {
             var token = jwt.sign({ user }, process.env.jwtKey);
             await User.updateOne({email: user.email}, {token}).then(() => null).catch(e => res.json(e));
         } else {
-            null;
+            null
         };
     });
 
@@ -69,7 +68,7 @@ module.exports.login = async (req, res) => {
                 });
             }
         })
-        .catch(e => res.status(401).send({
+        .catch(e => res.status(401).json({
             success: false,
             message: 'No User'
         }));
