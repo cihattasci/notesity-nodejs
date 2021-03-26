@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const UserController = require('../Controller/UserController');
 const NoteController = require('../Controller/NoteController');
 const CardController = require('../Controller/CardController');
@@ -43,6 +44,10 @@ router.get('/favorite/:whomId/get-user-favorites', FavoriteController.getFavorit
 router.get('/favorite/:whomId/:noteId/is-user-favorite', FavoriteController.isFavorite);
 router.delete('/favorite/:whomId/delete-user-favorites/:favoriteId', FavoriteController.removeFavorite);
 router.delete('/favorite/:whomId/delete-user-all-favorites', FavoriteController.removeAllFavorite);
+//privacy policy
+router.get('/notesity/privacy-policy', async (req, res) => {
+    res.sendFile(path.join(__dirname, '../../privacy_policy.html'));
+});
 
 module.exports = router;
 
