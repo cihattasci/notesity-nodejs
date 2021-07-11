@@ -151,3 +151,9 @@ module.exports.resetPassword = async (req, res) => {
       })
   });
 };
+
+module.exports.saveUserDeviceToken = async (req, res) => {
+    await User.updateOne({_id: req.body.userId}, {deviceToken: req.body.deviceToken})
+        .then(() => res.json({success: true}))
+        .catch(err => res.json({success: false}))
+};

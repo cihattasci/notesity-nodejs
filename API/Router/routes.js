@@ -14,6 +14,7 @@ router.get('/users/get-profile/:userId', UserController.getProfile);
 router.post('/users/logout/:id', UserController.logout);
 router.post('/users/change-password/:id', UserController.changePassword);
 router.post('/users/reset-password', UserController.resetPassword);
+router.post('/users/save-user-deviceToken', UserController.saveUserDeviceToken);
 //user card route
 router.post('/card/save-card/:userId', CardController.saveCard);
 router.get('/card/get-card/:userId', CardController.getCard);

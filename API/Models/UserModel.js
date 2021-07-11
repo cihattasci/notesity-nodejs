@@ -40,6 +40,10 @@ const UserSchema = new Schema({
     resetTokenExpirations: Date,
     isLoggedIn: {
         type: Boolean,
+    },
+    deviceToken: {
+        type: Number,
+        required: false,
     }
 }, {
     timestamps: true,
