@@ -42,7 +42,7 @@ const UserSchema = new Schema({
         type: Boolean,
     },
     deviceToken: {
-        type: Number,
+        type: String,
         required: false,
     }
 }, {

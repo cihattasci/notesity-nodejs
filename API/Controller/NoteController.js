@@ -3,19 +3,7 @@ const Purchased = require('../Models/PurchasedModel');
 const User = require('../Models/UserModel');
 const Comment = require('../Models/CommentModel');
 const Favorite = require('../Models/FavoriteModel');
-var firebase = require("firebase-admin");
-
-var firebaseConfig = {
-    apiKey: "AIzaSyBiMDrFnj3QSJ8BzJlLn-Z3OiFixbDsmmI",
-    authDomain: "notesity-24027.firebaseapp.com",
-    projectId: "notesity-24027",
-    storageBucket: "notesity-24027.appspot.com",
-    messagingSenderId: "911598624139",
-    appId: "1:911598624139:web:17cc7f89ac76f68431238e",
-    measurementId: "G-3TP4KG1TDF"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const FCM = require('fcm-node');
 
 module.exports.upload = async (req, res) => {
     const note = new Note({
@@ -160,26 +148,24 @@ module.exports.saveNoteToPurchased = async (req, res) => {
     await purchased.save()
         .then(note => res.json({note, success: true}))
         .catch(e => res.json(e));
-    
-    var payload = {
+
+    let fcm = new FCM(process.env.SERVER_KEY);
+    let message = {
+        to: deviceToken.toString(),
         notification: {
             title: "Notun Satın Alındı",
-            body: "Hey! " + req.body.subject + " notun satın alındı."
+            body: "Hey! " + req.body.subject + " notun satın alındı. " + profit + "₺ hesabında... :)",
+            sound: "default"
+        },
+    };
+        
+    fcm.send(message, (err, response) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(response);
         }
-    };
-
-    var options = {
-        priority: "high",
-        timeToLive: 60 * 60 * 24
-    };
-
-    firebase.messaging().sendToDevice(deviceToken, payload, options)
-        .then(function(response) {
-            console.log("Successfully sent message:", response);
-        })
-        .catch(function(error) {
-            console.log("Error sending message:", error);
-        });
+    });
 };
 
 module.exports.getPurchasedNote = async (req, res) => {
