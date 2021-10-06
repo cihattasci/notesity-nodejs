@@ -136,7 +136,8 @@ module.exports.saveNoteToPurchased = async (req, res) => {
         price: req.body.price,
     });
 
-    const profit = req.body.price <= 15 ? req.body.price*0.8.toFixed(2) : req.body.price*0.75.toFixed(2);
+    let profit = req.body.price*0.75;
+    profit = profit.toFixed(2);
     let deviceToken = null;
     await User.findOne({_id: req.body.userId})
         .then(user => deviceToken = user.deviceToken)
@@ -155,15 +156,16 @@ module.exports.saveNoteToPurchased = async (req, res) => {
         notification: {
             title: "Notun Satın Alındı",
             body: "Hey! " + req.body.subject + " notun satın alındı. " + profit + "₺ hesabında... :)",
-            sound: "default"
+            sound: "default",
+            image: process.env.PUSH_NOTIFICATION_IMAGE
         },
     };
         
     fcm.send(message, (err, response) => {
         if (err) {
-            res.send(err);
+            console.error({success: false, message: err, statusCode: 404});
         } else {
-            res.send(response);
+            console.log({success: true, message: response.json(), statusCode: 200});
         }
     });
 };
